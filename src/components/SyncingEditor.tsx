@@ -2,6 +2,8 @@ import React, { useRef, useState, useEffect } from "react";
 import { initialValue } from "../slateInitialValue";
 import Mitt from "mitt";
 import { Editor } from "slate-react";
+import { Operation } from "slate";
+import { removeListener } from "cluster";
 
 interface Props {}
 
@@ -11,12 +13,14 @@ export const SyncingEditor: React.FC<Props> = () => {
   const [value, setValue] = useState(initialValue);
   const id = useRef(`${Date.now()}`);
   const editor = useRef<Editor | null>(null);
-  //   const remote = useRef(null);
+  const remote = useRef(false);
 
   useEffect(() => {
-    emitter.on("*", (type) => {
+    (emitter as any).on("*", (type: string, ops: Operation[]) => {
       if (id.current === type) {
-        console.log("change happened in other editorx");
+        remote.current = true;
+        ops.forEach((op) => editor.current!.applyOperation(op));
+        remote.current = false;
       }
     });
   }, []);
@@ -24,6 +28,11 @@ export const SyncingEditor: React.FC<Props> = () => {
   return (
     <Editor
       ref={editor}
+      style={{
+        backgroundColor: "fafafa",
+        maxWidth: 800,
+        minHeight: 150
+      }}
       value={value}
       onChange={(opts) => {
         setValue(opts.value);
@@ -47,7 +56,7 @@ export const SyncingEditor: React.FC<Props> = () => {
             }
           }));
 
-        if (ops.length) {
+        if (ops.length && !remote.current) {
           emitter.emit(id.current, ops);
         }
       }}
