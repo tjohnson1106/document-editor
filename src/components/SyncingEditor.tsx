@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { initialValue } from "../slateInitialValue";
 import Mitt from "mitt";
 import { Editor } from "slate-react";
@@ -9,12 +9,15 @@ const emitter = new Mitt();
 
 export const SyncingEditor: React.FC<Props> = () => {
   const [value, setValue] = useState(initialValue);
+  const id = useRef(`${Date.now()}`);
   const editor = useRef<Editor | null>(null);
   //   const remote = useRef(null);
 
   useEffect(() => {
-    emitter.on("*", () => {
-      console.log("change happened");
+    emitter.on("*", (type) => {
+      if (id.current === type) {
+        console.log("change happened in other editorx");
+      }
     });
   }, []);
 
@@ -44,7 +47,9 @@ export const SyncingEditor: React.FC<Props> = () => {
             }
           }));
 
-        emitter.emit("something", ops);
+        if (ops.length) {
+          emitter.emit(id.current, ops);
+        }
       }}
     />
   );
