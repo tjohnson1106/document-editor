@@ -29,6 +29,7 @@ export const SyncingEditor: React.FC<Props> = () => {
         }
       }
     );
+    
     return () => {
       socket.off("new-remote-operations");
     };
