@@ -6,9 +6,11 @@ import { Operation, Value, ValueJSON } from "slate";
 
 const socket = io("http://localhost:4000");
 
-interface Props {}
+interface Props {
+  groupId: string;
+}
 
-export const SyncingEditor: React.FC<Props> = () => {
+export const SyncingEditor: React.FC<Props> = ({ groupId }) => {
   const [value, setValue] = useState(initialValue);
   const id = useRef(`${Date.now()}`);
   const editor = useRef<Editor | null>(null);
@@ -29,7 +31,7 @@ export const SyncingEditor: React.FC<Props> = () => {
         }
       }
     );
-    
+
     return () => {
       socket.off("new-remote-operations");
     };
