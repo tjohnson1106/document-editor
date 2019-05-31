@@ -17,9 +17,12 @@ export const SyncingEditor: React.FC<Props> = ({ groupId }) => {
   const remote = useRef(false);
 
   useEffect(() => {
-    socket.once("init-value", (value: ValueJSON) => {
-      setValue(Value.fromJSON(value));
-    });
+    fetch(`http://localhost:4000/groups/${groupId}`).then((x) =>
+      x.json().then((data) => {
+        console.log(data);
+        setValue(Value.fromJSON(data));
+      })
+    );
 
     socket.on(
       "new-remote-operations",
