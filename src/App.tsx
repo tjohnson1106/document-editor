@@ -1,7 +1,6 @@
 import React from "react";
-
-import { SyncingEditor } from "./components/SyncingEditor";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
+
 import { GroupEditor } from "./components/GroupEditor";
 
 const App = () => {
