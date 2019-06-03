@@ -49,7 +49,18 @@ export const SyncingEditor: React.FC<Props> = ({ groupId }) => {
           // bold selected text
           editor.current!.toggleMark("bold");
         }}
-      />
+      >
+        Bold
+      </button>
+      <button
+        onMouseDown={(e) => {
+          e.preventDefault();
+          // bold selected text
+          editor.current!.toggleMark("italic");
+        }}
+      >
+        Italic
+      </button>
       <Editor
         ref={editor}
         style={{
@@ -60,7 +71,18 @@ export const SyncingEditor: React.FC<Props> = ({ groupId }) => {
         value={value}
         renderMark={(props, _editor, next) => {
           if (props.mark.type === "bold") {
-            return <strong>{props.children}</strong>;
+            return (
+              <strong
+                style={{
+                  letterSpacing: 1,
+                  color: "blue"
+                }}
+              >
+                {props.children}
+              </strong>
+            );
+          } else if (props.mark.type === "italic") {
+            return <em style={{}}>{props.children}</em>;
           }
 
           return next();
